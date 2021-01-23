@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Superheroes
 {
@@ -95,6 +94,7 @@ namespace Superheroes
 
         public Superheroe()
         {
+            Heroe = true;
         }
 
         public Superheroe(string nombre, string imagen, bool vengador, bool xmen, bool heroe, bool villano)
@@ -107,19 +107,21 @@ namespace Superheroes
             Villano = villano;
         }
 
-        public static List<Superheroe> GetSamples()
+        public override bool Equals(object obj)
         {
-            List<Superheroe> ejemplos = new List<Superheroe>();
-
-            Superheroe ironman = new Superheroe("Ironman", @"https://sm.ign.com/ign_latam/screenshot/default/ybbpqktez5whedr0-1592031889_31aa.jpg", true, false, true, false);
-            Superheroe kingpin = new Superheroe("Kingpin", @"https://www.comicbasics.com/wp-content/uploads/2017/09/Kingpin.jpg", false, false, false, true);
-            Superheroe spiderman = new Superheroe("Spiderman", @"https://wipy.tv/wp-content/uploads/2019/08/destino-de-%E2%80%98Spider-Man%E2%80%99-en-los-Comics.jpg", true, true, true, false);
-
-            ejemplos.Add(ironman);
-            ejemplos.Add(kingpin);
-            ejemplos.Add(spiderman);
-
-            return ejemplos;
+            return obj is Superheroe superheroe &&
+                   _nombre == superheroe._nombre &&
+                   Nombre == superheroe.Nombre &&
+                   _imagen == superheroe._imagen &&
+                   Imagen == superheroe.Imagen &&
+                   _vengador == superheroe._vengador &&
+                   Vengador == superheroe.Vengador &&
+                   _xmen == superheroe._xmen &&
+                   Xmen == superheroe.Xmen &&
+                   _heroe == superheroe._heroe &&
+                   Heroe == superheroe.Heroe &&
+                   _villano == superheroe._villano &&
+                   Villano == superheroe.Villano;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

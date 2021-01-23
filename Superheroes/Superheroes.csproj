@@ -58,8 +58,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Comandos.cs" />
     <Compile Include="Converters\FondoConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="DatosService.cs" />
+    <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Superheroe.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

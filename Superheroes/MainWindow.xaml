@@ -14,9 +14,15 @@
         Background="AliceBlue"
         Icon="Assets/shield.ico"
         FontSize="14">
+    <Window.CommandBindings>
+        <CommandBinding Command="local:Comandos.Aceptar"
+                        Executed="AceptarCommandBinding_Executed"
+                        CanExecute="AceptarCommandBinding_CanExecute" />
+        <CommandBinding Command="local:Comandos.Limpiar"
+                        Executed="LimpiarCommandBinding_Executed"
+                        CanExecute="LimpiarCommandBinding_CanExecute" />
+    </Window.CommandBindings>
     <Window.Resources>
-        <local:Superheroe x:Key="nuevo"
-                          Heroe="True"></local:Superheroe>
         <converters:FondoConverter x:Key="conversorFondo"></converters:FondoConverter>
         <converters:VisibilityConverter x:Key="conversorVisibilidad"></converters:VisibilityConverter>
 
@@ -74,7 +80,7 @@
     <TabControl Margin="10">
         <TabItem Header="Ver superhéroes">
             <DockPanel x:Name="superheroeDockPanel"
-                       Background="{Binding Path=Heroe, Converter={StaticResource conversorFondo}}">
+                       Background="{Binding Path=SuperheroeSeleccionado.Heroe, Converter={StaticResource conversorFondo}}">
                 <DockPanel LastChildFill="False"
                            DockPanel.Dock="Top">
                     <TextBlock DockPanel.Dock="Left"
@@ -83,7 +89,7 @@
                                Foreground="White"
                                FontFamily="Segoe UI Black"
                                Margin="10,0,0,0"
-                               Text="{Binding Path=Nombre}">
+                               Text="{Binding Path=SuperheroeSeleccionado.Nombre}">
                         <TextBlock.Effect>
                             <DropShadowEffect></DropShadowEffect>
                         </TextBlock.Effect>
@@ -92,11 +98,11 @@
                                 DockPanel.Dock="Right"
                                 VerticalAlignment="Bottom">
                         <Image Source="Assets/avengers.png"
-                               Visibility="{Binding Path=Vengador,Converter={StaticResource conversorVisibilidad}}"
+                               Visibility="{Binding Path=SuperheroeSeleccionado.Vengador,Converter={StaticResource conversorVisibilidad}}"
                                Width="40"
                                Margin="0,0,10,0"></Image>
                         <Image Source="Assets/xmen.png"
-                               Visibility="{Binding Path=Xmen,Converter={StaticResource conversorVisibilidad}}"
+                               Visibility="{Binding Path=SuperheroeSeleccionado.Xmen,Converter={StaticResource conversorVisibilidad}}"
                                Width="60"></Image>
                     </StackPanel>
                 </DockPanel>
@@ -105,20 +111,22 @@
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
                     <Image x:Name="leftImage"
+                           Tag="-1"
                            Style="{StaticResource flechas}"
-                           MouseLeftButtonUp="leftImage_MouseLeftButtonUp"></Image>
-                    <TextBlock x:Name="actualTextBlock"
+                           MouseLeftButtonUp="FlechaMouseLeftButtonUp"></Image>
+                    <TextBlock Text="{Binding Path=Indice}"
                                Style="{StaticResource contador}"
                                Margin="5,0,0,5"></TextBlock>
                     <TextBlock Style="{StaticResource contador}"
                                Margin="0,0,0,5">/</TextBlock>
-                    <TextBlock x:Name="totalTextBlock"
+                    <TextBlock Text="{Binding Path=Cantidad}"
                                Style="{StaticResource contador}"
                                Margin="0,0,5,5"></TextBlock>
                     <Image x:Name="rightImage"
+                           Tag="1"
                            Style="{StaticResource flechas}"
                            RenderTransformOrigin="0.5,0.5"
-                           MouseLeftButtonUp="rightImage_MouseLeftButtonUp">
+                           MouseLeftButtonUp="FlechaMouseLeftButtonUp">
                         <Image.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleY="1"
@@ -131,15 +139,14 @@
                         </Image.RenderTransform>
                     </Image>
                 </StackPanel>
-                <Image Source="{Binding Path=Imagen}"
+                <Image Source="{Binding Path=SuperheroeSeleccionado.Imagen}"
                        Stretch="UniformToFill"
                        Margin="10"></Image>
             </DockPanel>
         </TabItem>
         <TabItem Header="Nuevo superhéroe">
             <Grid Margin="10"
-                  x:Name="nuevoGrid"
-                  DataContext="{DynamicResource nuevo}">
+                  x:Name="nuevoGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -153,7 +160,7 @@
                     </StackPanel>
                     <TextBox x:Name="nombreTextBox"
                              Margin="0,0,5,15"
-                             Text="{Binding Path=Nombre}"></TextBox>
+                             Text="{Binding Path=SuperheroeNuevo.Nombre, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <StackPanel Orientation="Horizontal"
                                 Margin="0,0,0,2">
                         <TextBlock>Imagen</TextBlock>
@@ -162,7 +169,7 @@
                     </StackPanel>
                     <TextBox x:Name="imagenTextBox"
                              Margin="0,0,5,15"
-                             Text="{Binding Path=Imagen}"></TextBox>
+                             Text="{Binding Path=SuperheroeNuevo.Imagen, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
@@ -173,9 +180,9 @@
                                  Style="{StaticResource opciones}">
                             <StackPanel>
                                 <RadioButton x:Name="heroeRadioButton"
-                                             IsChecked="{Binding Path=Heroe}">Héroe</RadioButton>
+                                             IsChecked="{Binding Path=SuperheroeNuevo.Heroe}">Héroe</RadioButton>
                                 <RadioButton x:Name="villanoRadioButton"
-                                             IsChecked="{Binding Path=Villano}">Villano</RadioButton>
+                                             IsChecked="{Binding Path=SuperheroeNuevo.Villano}">Villano</RadioButton>
                             </StackPanel>
                         </Border>
                         <Border Grid.Column="1"
@@ -183,19 +190,19 @@
                                 Style="{StaticResource opciones}">
                             <StackPanel IsEnabled="{Binding ElementName=heroeRadioButton,Path=IsChecked}">
                                 <CheckBox x:Name="vengadoresCheckBox"
-                                          IsChecked="{Binding Path=Vengador}">Vengadores</CheckBox>
+                                          IsChecked="{Binding Path=SuperheroeNuevo.Vengador}">Vengadores</CheckBox>
                                 <CheckBox x:Name="xMenCheckBox"
-                                          IsChecked="{Binding Path=Xmen}">X-men</CheckBox>
+                                          IsChecked="{Binding Path=SuperheroeNuevo.Xmen}">X-men</CheckBox>
                             </StackPanel>
                         </Border>
                     </Grid>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
                         <Button x:Name="aceptarButton"
-                                Click="aceptarButton_Click"
+                                Command="local:Comandos.Aceptar"
                                 IsDefault="True">Aceptar</Button>
                         <Button x:Name="limpiarButton"
-                                Click="limpiarButton_Click"
+                                Command="local:Comandos.Limpiar"
                                 IsCancel="True"
                                 Margin="5,0,0,0">Limpiar</Button>
                     </StackPanel>

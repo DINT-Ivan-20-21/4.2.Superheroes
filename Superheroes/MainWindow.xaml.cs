@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Superheroes
@@ -11,58 +9,38 @@ namespace Superheroes
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<Superheroe> listaSuperheroes;
+        MainWindowViewModel viewModel;
 
         public MainWindow()
         {
+            viewModel = new MainWindowViewModel();
             InitializeComponent();
-
-            listaSuperheroes = Superheroe.GetSamples();
-            superheroeDockPanel.DataContext = listaSuperheroes.FirstOrDefault();
-            actualTextBlock.Text = "1";
-            totalTextBlock.Text = listaSuperheroes.Count.ToString();
+            DataContext = viewModel;
+        }
+        private void FlechaMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            viewModel.ActualizaIndice((sender as Image).Tag.ToString());
         }
 
-        private void aceptarButton_Click(object sender, RoutedEventArgs e)
+        private void AceptarCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            listaSuperheroes.Add((Superheroe)this.Resources["nuevo"]);
-            MessageBox.Show("Superhéroe insertado con exito", "Superhéroes", MessageBoxButton.OK, MessageBoxImage.Information);
-            totalTextBlock.Text = listaSuperheroes.Count.ToString();
-
-            ReiniciarSuperHeroe();
+            viewModel.AñadirSuperheroe();
+            MessageBox.Show("Persona añadida con éxito", "PersonaMVVM", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void leftImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void AceptarCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            int actual = Int32.Parse(actualTextBlock.Text);
-
-            if (actual > 1)
-            {
-                superheroeDockPanel.DataContext = listaSuperheroes[actual - 2];
-                actualTextBlock.Text = (actual - 1).ToString();
-            }
+            e.CanExecute = viewModel.ComprobarAñadirSuperheroe();
         }
 
-        private void rightImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void LimpiarCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            int actual = Int32.Parse(actualTextBlock.Text);
-
-            if (actual < listaSuperheroes.Count)
-            {
-                superheroeDockPanel.DataContext = listaSuperheroes[actual];
-                actualTextBlock.Text = (actual + 1).ToString();
-            }
+            viewModel.LimpiarSuperheroe();
         }
 
-        private void limpiarButton_Click(object sender, RoutedEventArgs e)
+        private void LimpiarCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            ReiniciarSuperHeroe();
-        }
-
-        private void ReiniciarSuperHeroe()
-        {
-            this.Resources.Remove("nuevo");
-            this.Resources.Add("nuevo", new Superheroe() { Heroe = true });
+            e.CanExecute = viewModel.ComprobarLimpiarSuperheroe();
         }
     }
 }
